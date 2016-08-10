@@ -35,7 +35,7 @@
         "sonata-project/cache-bundle": "^3.0"
     },
     "replace": {
-        "sonata-project/block-bundle": "self.version"
+        "sonata-project/block-bundle": "3.0.1"
     },
     "autoload": {
         "psr-4": { "Sonata\\BlockBundle\\": "" },
