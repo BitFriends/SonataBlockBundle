@@ -14,6 +14,7 @@ namespace Sonata\BlockBundle\Block\Service;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\BlockBundle\Block\BaseBlockService;
 use Sonata\BlockBundle\Block\BlockContextInterface;
+use Sonata\BlockBundle\Form\Type\ContainerTemplateType;
 use Sonata\BlockBundle\Model\BlockInterface;
 use Sonata\CoreBundle\Model\Metadata;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,7 +39,7 @@ class ContainerBlockService extends BaseBlockService
                 array('code', 'text', array('required' => false)),
                 array('layout', 'textarea', array()),
                 array('class', 'text', array('required' => false)),
-                array('template', 'sonata_type_container_template_choice', array()),
+                array('template', ContainerTemplateType::class, array()),
             ),
         ));
 

@@ -13,52 +13,34 @@ namespace Sonata\BlockBundle\Form\Type;
 
 use Sonata\BlockBundle\Block\BlockServiceManagerInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ServiceListType extends AbstractType
 {
-    protected $manager;
 
     /**
-     * @param BlockServiceManagerInterface $manager
+     * @var \Sonata\BlockBundle\Block\BlockServiceManagerInterface
      */
-    public function __construct(BlockServiceManagerInterface $manager)
-    {
-        $this->manager = $manager;
-    }
+    private $manager;
 
     /**
-     * {@inheritdoc}
+     * @var \Symfony\Component\Translation\TranslatorInterface
      */
-    public function getBlockPrefix()
-    {
-        return 'sonata_block_service_choice';
-    }
+    private $translator;
 
     /**
-     * {@inheritdoc}
+     * @param \Sonata\BlockBundle\Block\BlockServiceManagerInterface $manager
+     * @param \Symfony\Component\Translation\TranslatorInterface $translator
      */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
-    {
-        return 'choice';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $this->configureOptions($resolver);
+    public function __construct(
+        BlockServiceManagerInterface $manager,
+        TranslatorInterface $translator = null
+    ) {
+        $this->manager    = $manager;
+        $this->translator = $translator;
     }
 
     /**
@@ -66,38 +48,53 @@ class ServiceListType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $manager = $this->manager;
+        $manager    = $this->manager;
+        $translator = $this->translator;
 
-        $resolver->setRequired(array(
-            'context',
-        ));
+        $resolver->setRequired('context');
 
-        $resolver->setDefaults(array(
-            'multiple' => false,
-            'expanded' => false,
-            'choices' => function (Options $options, $previousValue) use ($manager) {
-                $types = array();
-                foreach ($manager->getServicesByContext($options['context'], $options['include_containers']) as $code => $service) {
-                    $types[$code] = sprintf('%s - %s', $service->getName(), $code);
+        $resolver->setDefault(
+            'choices',
+            function (Options $options) use ($manager, $translator) {
+                $choices = array();
+
+                $services = $manager->getServicesByContext(
+                    $options['context'],
+                    $options['include_containers']
+                );
+
+                foreach ($services as $code => $service) {+
+                    $blockTitle = $service->getName();
+
+                    if ($translator) {
+                        $metadata = $service->getBlockMetadata();
+                        $title    = $metadata->getTitle();
+                        $domain   = $metadata->getDomain();
+
+                        $blockTitle = $translator->trans(
+                            $title,
+                            array(),
+                            $domain
+                        );
+                    }
+
+                    $name = sprintf('%s - %s', $blockTitle, $code);
+
+                    $choices[$name] = $code;
                 }
 
-                return $types;
-            },
-            'preferred_choices' => array(),
-            'empty_data' => function (Options $options) {
-                $multiple = isset($options['multiple']) && $options['multiple'];
-                $expanded = isset($options['expanded']) && $options['expanded'];
-
-                return $multiple || $expanded ? array() : '';
-            },
-            'empty_value' => function (Options $options, $previousValue) {
-                $multiple = isset($options['multiple']) && $options['multiple'];
-                $expanded = isset($options['expanded']) && $options['expanded'];
-
-                return $multiple || $expanded || !isset($previousValue) ? null : '';
-            },
-            'error_bubbling' => false,
-            'include_containers' => false,
-        ));
+                return $choices;
+            }
+        );
+        $resolver->setDefault('include_containers', false);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParent()
+    {
+        return ChoiceType::class;
+    }
+
 }

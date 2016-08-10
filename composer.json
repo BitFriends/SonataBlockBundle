@@ -1,7 +1,7 @@
 {
-    "name": "sonata-project/block-bundle",
+    "name": "bitfriends/sonata-block-bundle",
     "type": "symfony-bundle",
-    "description": "Symfony SonataBlockBundle",
+    "description": "Symfony3 SonataBlockBundle",
     "keywords": ["sonata", "block"],
     "homepage": "https://sonata-project.org/bundles/block",
     "license": "MIT",
@@ -18,16 +18,16 @@
     ],
     "require": {
         "php": "^5.3 || ^7.0",
-        "symfony/http-kernel": "^2.3 || ^3.0",
-        "symfony/form": "^2.3 || ^3.0",
         "doctrine/common": "^2.3",
+        "sonata-project/cache": "^1.0",
         "sonata-project/core-bundle": "^3.0",
-        "sonata-project/cache": "^1.0"
+        "symfony/form": "^3.0",
+        "symfony/http-kernel": "^3.0"
     },
     "require-dev": {
         "knplabs/knp-menu-bundle": "^2.0",
         "sonata-project/admin-bundle": "^3.0 || ^4.0@dev",
-        "symfony/phpunit-bridge": "^2.7 || ^3.0",
+        "symfony/phpunit-bridge": "^3.0",
         "sllh/php-cs-fixer-styleci-bridge": "^2.0"
     },
     "suggest": {
@@ -43,6 +43,9 @@
     },
     "autoload-dev": {
         "psr-4": { "Sonata\\BlockBundle\\Tests\\": "Tests/" }
+     },
+     "config": {
+         "sort-packages": true
      },
     "extra": {
         "branch-alias": {
