@@ -12,60 +12,28 @@
 namespace Sonata\BlockBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class ContainerTemplateType.
- *
  *
  * @author Hugo Briand <briand@ekino.com>
  */
 class ContainerTemplateType extends AbstractType
 {
+
     /**
      * @var array
      */
-    protected $templateChoices;
+    private $templateChoices;
 
     /**
      * @param array $templateChoices
      */
     public function __construct(array $templateChoices)
     {
-        $this->templateChoices = $templateChoices;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
-    {
-        return 'sonata_type_container_template_choice';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
-    {
-        return 'choice';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $this->configureOptions($resolver);
+        $this->templateChoices = array_flip($templateChoices);
     }
 
     /**
@@ -73,8 +41,15 @@ class ContainerTemplateType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-            'choices' => $this->templateChoices,
-        ));
+        $resolver->setDefault('choices', $this->templateChoices);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParent()
+    {
+        return ChoiceType::class;
+    }
+
 }
