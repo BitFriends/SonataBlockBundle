@@ -34,6 +34,9 @@
         "knplabs/knp-menu-bundle": "^2.0",
         "sonata-project/cache-bundle": "^3.0"
     },
+    "replace": {
+        "sonata-project/block-bundle": "self.version"
+    },
     "autoload": {
         "psr-4": { "Sonata\\BlockBundle\\": "" },
         "exclude-from-classmap": [
